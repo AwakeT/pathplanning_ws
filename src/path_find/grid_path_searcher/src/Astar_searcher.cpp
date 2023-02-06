@@ -3,7 +3,10 @@
 using namespace std;
 using namespace Eigen;
 
-//初始化地图函数
+/*
+初始化栅格地图函数
+利用向量存储global_xyz_l地图下边界，global_xyz_u地图上边界，max_x_id栅格地图最大xyz
+*/
 void AstarPathFinder::initGridMap(double _resolution, Vector3d global_xyz_l, Vector3d global_xyz_u, int max_x_id, int max_y_id, int max_z_id)
 {   
     gl_xl = global_xyz_l(0);
