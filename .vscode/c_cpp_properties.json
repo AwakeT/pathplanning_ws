@@ -1,0 +1,37 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "${default}",
+                "limitSymbolsToIncludedHeaders": false
+            },
+            "includePath": [
+                "/home/ubuntu/mic_ws/devel/include/**",
+                "/opt/ros/melodic/include/**",
+                "/home/ubuntu/axg_ws/devel/include/**",
+                "/home/ubuntu/loam_ws/src/A-LOAM/include/**",
+                "/home/ubuntu/axg_ws/src/auto_exploration_pkg/auto_exploration_goals/include/**",
+                "/home/ubuntu/axg_ws/src/pure_pursuit/f1tenth_simulator/include/**",
+                "/home/ubuntu/gazebo_test_ws/src/gazebo_nav/include/**",
+                "/home/ubuntu/pathplanning_ws/src/path_find/grid_path_searcher/include/**",
+                "/home/ubuntu/axg_ws/src/auto_exploration_pkg/my_frontier_exploration/include/**",
+                "/home/ubuntu/axg_ws/src/common_tutorials/pluginlib_tutorials/include/**",
+                "/home/ubuntu/axg_ws/src/ros_primary/include/**",
+                "/home/ubuntu/axg_ws/src/shandong/include/**",
+                "/home/ubuntu/mic_ws/src/speech_command/include/**",
+                "/home/ubuntu/axg_ws/src/pure_pursuit/tianracer_navigation/include/**",
+                "/home/ubuntu/axg_ws/src/turtlesim_py/include/**",
+                "/home/ubuntu/axg_ws/src/vioce_control/include/**",
+                "/home/ubuntu/mic_ws/src/xf_mic_asr_offline/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "c++14",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}
