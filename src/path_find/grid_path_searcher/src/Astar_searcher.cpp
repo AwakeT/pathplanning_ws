@@ -3,6 +3,7 @@
 using namespace std;
 using namespace Eigen;
 
+//初始化地图函数
 void AstarPathFinder::initGridMap(double _resolution, Vector3d global_xyz_l, Vector3d global_xyz_u, int max_x_id, int max_y_id, int max_z_id)
 {   
     gl_xl = global_xyz_l(0);
