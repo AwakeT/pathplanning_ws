@@ -150,20 +150,26 @@ inline void AstarPathFinder::AstarGetSucc(GridNodePtr currentPtr, vector<GridNod
 
 double AstarPathFinder::getHeu(GridNodePtr node1, GridNodePtr node2)
 {
-    /* 
-    choose possible heuristic function you want
-    Manhattan, Euclidean, Diagonal, or 0 (Dijkstra)
-    Remember tie_breaker learned in lecture, add it here ?
-    *
-    *
-    *
-    STEP 1: finish the AstarPathFinder::getHeu , which is the heuristic function
-    please write your code below
-    *
-    *
-    */
+   double dx = abs(node1->index(0) - node2->index(0));
+    double dy = abs(node1->index(1) - node2->index(1));
+    double dz = abs(node1->index(2) - node2->index(2));
 
-    return 0;
+    double h;
+    int diag = min(min(dx, dy), dz);
+    dx -= diag;
+    dy -= diag;
+    dz -= diag;
+
+    if (dx == 0) {
+        h = 1.0 * sqrt(3.0) * diag + sqrt(2.0) * min(dy, dz) + 1.0 * abs(dy - dz);
+    }
+    if (dy == 0) {
+        h = 1.0 * sqrt(3.0) * diag + sqrt(2.0) * min(dx, dz) + 1.0 * abs(dx - dz);
+    }
+    if (dz == 0) {
+        h = 1.0 * sqrt(3.0) * diag + sqrt(2.0) * min(dx, dy) + 1.0 * abs(dx - dy);
+    }
+    return h;
 }
 
 void AstarPathFinder::AstarGraphSearch(Vector3d start_pt, Vector3d end_pt)
