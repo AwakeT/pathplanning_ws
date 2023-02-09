@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/ubuntu/pathplanning_ws/build/devel/lib;/home/ubuntu/mic_ws/devel/lib;/home/ubuntu/loam_ws/devel/lib;/home/ubuntu/gazebo_test_ws/devel/lib;/home/ubuntu/ucarV2_ws/devel/lib;/home/ubuntu/axg_ws/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/ubuntu/pathplanning_ws/build/devel/lib;/home/ubuntu/r818_ws/devel/lib;/home/ubuntu/loam_ws/devel/lib;/home/ubuntu/gazebo_test_ws/devel/lib;/home/ubuntu/ucarV2_ws/devel/lib;/home/ubuntu/axg_ws/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

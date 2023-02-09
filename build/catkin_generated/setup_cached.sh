@@ -8,7 +8,7 @@
 
 # modified environment variables
 export CMAKE_PREFIX_PATH="/home/ubuntu/pathplanning_ws/build/devel:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/home/ubuntu/pathplanning_ws/build/devel/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH='/home/ubuntu/pathplanning_ws/build/devel/lib:/home/ubuntu/r818_ws/devel/lib:/home/ubuntu/loam_ws/devel/lib:/home/ubuntu/gazebo_test_ws/devel/lib:/home/ubuntu/ucarV2_ws/devel/lib:/home/ubuntu/axg_ws/devel/lib:/opt/ros/melodic/lib:/home/ubuntu/Qt5.9.9/lib'
 export PATH='/opt/ros/melodic/bin:/home/ubuntu/.local/bin:/home/ubuntu/Qt5.9.9/5.9.9/gcc_64/bin:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
 export PKG_CONFIG_PATH="/home/ubuntu/pathplanning_ws/build/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD='/home/ubuntu/pathplanning_ws/build'
