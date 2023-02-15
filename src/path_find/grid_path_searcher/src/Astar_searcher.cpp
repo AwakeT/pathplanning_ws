@@ -79,7 +79,7 @@ vector<Vector3d> AstarPathFinder::getVisitedNodes()
                 if(GridNodeMap[i][j][k]->id != 0) // visualize all nodes in open and close list
 //                if(GridNodeMap[i][j][k]->id == -1)  // visualize nodes in close list only TODO: careful
                     visited_nodes.push_back(GridNodeMap[i][j][k]->coord);
-            g}
+            }
 
     ROS_WARN("visited_nodes size : %d", visited_nodes.size());
     return visited_nodes;
