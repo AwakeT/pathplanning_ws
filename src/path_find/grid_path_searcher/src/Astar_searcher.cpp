@@ -3,10 +3,8 @@
 using namespace std;
 using namespace Eigen;
 
-/*
-初始化栅格地图函数
-利用向量存储global_xyz_l地图下边界，global_xyz_u地图上边界，max_x_id栅格地图最大xyz
-*/
+bool tie_break = false;
+
 void AstarPathFinder::initGridMap(double _resolution, Vector3d global_xyz_l, Vector3d global_xyz_u, int max_x_id, int max_y_id, int max_z_id)
 {   
     gl_xl = global_xyz_l(0);
@@ -78,10 +76,10 @@ vector<Vector3d> AstarPathFinder::getVisitedNodes()
     for(int i = 0; i < GLX_SIZE; i++)
         for(int j = 0; j < GLY_SIZE; j++)
             for(int k = 0; k < GLZ_SIZE; k++){   
-                //if(GridNodeMap[i][j][k]->id != 0) // visualize all nodes in open and close list
-                if(GridNodeMap[i][j][k]->id == -1)  // visualize nodes in close list only
+                if(GridNodeMap[i][j][k]->id != 0) // visualize all nodes in open and close list
+//                if(GridNodeMap[i][j][k]->id == -1)  // visualize nodes in close list only TODO: careful
                     visited_nodes.push_back(GridNodeMap[i][j][k]->coord);
-            }
+            g}
 
     ROS_WARN("visited_nodes size : %d", visited_nodes.size());
     return visited_nodes;
@@ -137,7 +135,7 @@ inline bool AstarPathFinder::isFree(const int & idx_x, const int & idx_y, const 
 
 inline void AstarPathFinder::AstarGetSucc(GridNodePtr currentPtr, vector<GridNodePtr> & neighborPtrSets, vector<double> & edgeCostSets)
 {   
-    neighborPtrSets.clear();
+    neighborPtrSets.clear(); // Note: the pointers in this set copy pointers to GridNodeMap
     edgeCostSets.clear();
     /*
     *
@@ -146,29 +144,114 @@ inline void AstarPathFinder::AstarGetSucc(GridNodePtr currentPtr, vector<GridNod
     *
     *
     */
+    // idea index -> coordinate -> edgecost
+    if(currentPtr == nullptr)
+        std::cout << "Error: Current pointer is null!" << endl;
+
+
+    Eigen::Vector3i thisNode = currentPtr -> index;
+    int this_x = thisNode[0];
+    int this_y = thisNode[1];
+    int this_z = thisNode[2];
+    auto this_coord = currentPtr -> coord;
+    int  n_x, n_y, n_z;
+    double dist;
+    GridNodePtr temp_ptr = nullptr;
+    Eigen::Vector3d n_coord;
+
+    for(int i = -1;i <= 1;++i ){
+        for(int j = -1;j <= 1;++j ){
+            for(int k = -1;k <= 1;++k){
+                if( i == 0 && j == 0 && k == 0)
+                    continue; // to avoid this node
+                n_x = this_x + i;
+                n_y = this_y + j;
+                n_z = this_z + k;
+
+                if( (n_x < 0) || (n_x > (GLX_SIZE - 1)) || (n_y < 0) || (n_y > (GLY_SIZE - 1) ) || (n_z < 0) || (n_z > (GLZ_SIZE - 1)))
+                    continue; // to avoid index problem
+                if(isOccupied(n_x, n_y, n_z))
+                    continue; // to avoid obstacles
+                // put the pointer into neighborPtrSets
+                temp_ptr = GridNodeMap[n_x][n_y][n_z];
+
+                if(temp_ptr->id == -1) continue; // todo to check this; why the node can transversing the obstacles
+
+                n_coord = temp_ptr->coord;
+
+
+                if(temp_ptr == currentPtr){
+                    std::cout << "Error: temp_ptr == currentPtr)" << std::endl;
+                }
+
+                if( (std::abs(n_coord[0] - this_coord[0]) < 1e-6) and (std::abs(n_coord[1] - this_coord[1]) < 1e-6) and (std::abs(n_coord[2] - this_coord[2]) < 1e-6 )){
+                    std::cout << "Error: Not expanding correctly!" << std::endl;
+                    std::cout << "n_coord:" << n_coord[0] << " "<<n_coord[1]<<" "<<n_coord[2] << std::endl;
+                    std::cout << "this_coord:" << this_coord[0] << " "<<this_coord[1]<<" "<<this_coord[2] << std::endl;
+
+                    std::cout << "current node index:" << this_x << " "<< this_y<<" "<< this_z << std::endl;
+                    std::cout << "neighbor node index:" << n_x << " "<< n_y<<" "<< n_z << std::endl;
+                }
+
+
+                dist = std::sqrt( (n_coord[0] - this_coord[0]) * (n_coord[0] - this_coord[0])+
+                        (n_coord[1] - this_coord[1]) * (n_coord[1] - this_coord[1])+
+                        (n_coord[2] - this_coord[2]) * (n_coord[2] - this_coord[2]));
+                neighborPtrSets.push_back(temp_ptr); // calculate the cost in edgeCostSets: inf means that is not unexpanded
+                edgeCostSets.push_back(dist); // put the cost inot edgeCostSets
+
+
+
+
+            }
+        }
+    }
+
+
+
 }
 
 double AstarPathFinder::getHeu(GridNodePtr node1, GridNodePtr node2)
 {
-   double dx = abs(node1->index(0) - node2->index(0));
-    double dy = abs(node1->index(1) - node2->index(1));
-    double dz = abs(node1->index(2) - node2->index(2));
-
+    /* 
+    choose possible heuristic function you want
+    Manhattan, Euclidean, Diagonal, or 0 (Dijkstra)
+    Remember tie_breaker learned in lecture, add it here ?
+    *
+    *
+    *
+    STEP 1: finish the AstarPathFinder::getHeu , which is the heuristic function
+    please write your code below
+    *
+    *
+    */
     double h;
-    int diag = min(min(dx, dy), dz);
-    dx -= diag;
-    dy -= diag;
-    dz -= diag;
+    auto node1_coord = node1->coord;
+    auto node2_coord = node2->coord;
 
-    if (dx == 0) {
-        h = 1.0 * sqrt(3.0) * diag + sqrt(2.0) * min(dy, dz) + 1.0 * abs(dy - dz);
-    }
-    if (dy == 0) {
-        h = 1.0 * sqrt(3.0) * diag + sqrt(2.0) * min(dx, dz) + 1.0 * abs(dx - dz);
-    }
-    if (dz == 0) {
-        h = 1.0 * sqrt(3.0) * diag + sqrt(2.0) * min(dx, dy) + 1.0 * abs(dx - dy);
-    }
+    // Heuristics 1: Manhattan
+//    h = std::abs(node1_coord(0) - node2_coord(0) ) +
+//            std::abs(node1_coord(1) - node2_coord(1) ) +
+//            std::abs(node1_coord(2) - node2_coord(2) );
+
+    // Heuristics 2: Euclidean
+//    h = std::sqrt(std::pow((node1_coord(0) - node2_coord(0)), 2 ) +
+//            std::pow((node1_coord(1) - node2_coord(1)), 2 ) +
+//            std::pow((node1_coord(2) - node2_coord(2)), 2 ));
+
+    // Heuristics 3: Diagnol distance
+        double dx = std::abs(node1_coord(0) - node2_coord(0) );
+        double dy = std::abs(node1_coord(1) - node2_coord(1) );
+        double dz = std::abs(node1_coord(2) - node2_coord(2) );
+        double min_xyz = std::min({dx, dy, dz});
+        h = dx + dy + dz + (std::sqrt(3.0) -3) * min_xyz; // idea: diagnol is a short-cut, find out how many short-cuts can be realized
+
+        if(tie_break){
+            double p = 1.0 / 25.0;
+            h *= (1.0 + p);
+            //std::cout << "Tie Break!" << std::endl;
+        }
+//    std::cout <<"h is: "<< h << std::endl;
     return h;
 }
 
@@ -201,7 +284,7 @@ void AstarPathFinder::AstarGraphSearch(Vector3d start_pt, Vector3d end_pt)
     //STEP 1: finish the AstarPathFinder::getHeu , which is the heuristic function
     startPtr -> id = 1; 
     startPtr -> coord = start_pt;
-    openSet.insert( make_pair(startPtr -> fScore, startPtr) );
+    openSet.insert( make_pair(startPtr -> fScore, startPtr) ); // todo Note: modified, insert the pointer GridNodeMap[i][j][k] to the start node in grid map
     /*
     *
     STEP 2 :  some else preparatory works which should be done before while loop
@@ -209,8 +292,16 @@ void AstarPathFinder::AstarGraphSearch(Vector3d start_pt, Vector3d end_pt)
     *
     *
     */
+    // three dimension pointer GridNodeMap[i][j][k] is pointed to a struct GridNode(Eigen::Vector3i _index, Eigen::Vector3d _coord);
+    // assign g(xs) = 0, g(n) = inf (already done in initialzation of struct)
+    // mark start point as visited(expanded) (id 0: no operation, id: 1 in OPEN, id -1: in CLOSE )
+
+    GridNodeMap[start_idx[0]][start_idx[1]][start_idx[2]] -> id = 1;
+
+
     vector<GridNodePtr> neighborPtrSets;
     vector<double> edgeCostSets;
+    Eigen::Vector3i current_idx; // record the current index
 
     // this is the main loop
     while ( !openSet.empty() ){
@@ -226,12 +317,16 @@ void AstarPathFinder::AstarGraphSearch(Vector3d start_pt, Vector3d end_pt)
         *
         */
 
+        currentPtr = openSet.begin() -> second; // first T1, second T2
+        openSet.erase(openSet.begin()); // remove the node with minimal f value
+        current_idx = currentPtr->index;
+        GridNodeMap[current_idx[0]][current_idx[1]][current_idx[2]] -> id = -1;// update the id in grid node map
         // if the current node is the goal 
         if( currentPtr->index == goalIdx ){
             ros::Time time_2 = ros::Time::now();
             terminatePtr = currentPtr;
             ROS_WARN("[A*]{sucess}  Time in A*  is %f ms, path cost if %f m", (time_2 - time_1).toSec() * 1000.0, currentPtr->gScore * resolution );            
-            return;  
+            return;
         }
         //get the succetion
         AstarGetSucc(currentPtr, neighborPtrSets, edgeCostSets);  //STEP 4: finish AstarPathFinder::AstarGetSucc yourself     
@@ -251,11 +346,12 @@ void AstarPathFinder::AstarGraphSearch(Vector3d start_pt, Vector3d end_pt)
             please write your code below
             
             IMPORTANT NOTE!!!
-            neighborPtrSets[i]->id = -1 : unexpanded
-            neighborPtrSets[i]->id = 1 : expanded, equal to this node is in close set
+            neighborPtrSets[i]->id = -1 : expanded, equal to this node is in close set
+            neighborPtrSets[i]->id = 1 : unexpanded, equal to this node is in open set
             *        
             */
-            if(neighborPtr -> id != 1){ //discover a new node, which is not in the closed set and open set
+            neighborPtr = neighborPtrSets[i];
+            if(neighborPtr -> id == 0){ //discover a new node, which is not in the closed set and open set
                 /*
                 *
                 *
@@ -263,9 +359,17 @@ void AstarPathFinder::AstarGraphSearch(Vector3d start_pt, Vector3d end_pt)
                 please write your code below
                 *        
                 */
+                // shall update: gScore = inf; fScore = inf; cameFrom = NULL, id, mayby direction
+
+                neighborPtr->gScore = currentPtr->gScore + edgeCostSets[i];
+                neighborPtr->fScore = neighborPtr->gScore + getHeu(neighborPtr,endPtr);
+                neighborPtr->cameFrom = currentPtr; // todo shallow copy or deep copy
+                // push node "m" into OPEN
+                openSet.insert(make_pair(neighborPtr -> fScore, neighborPtr));
+                neighborPtr -> id = 1;
                 continue;
             }
-            else if(0){ //this node is in open set and need to judge if it needs to update, the "0" should be deleted when you are coding
+            else if(neighborPtr -> id == 1){ //this node is in open set and need to judge if it needs to update, the "0" should be deleted when you are coding
                 /*
                 *
                 *
@@ -273,6 +377,13 @@ void AstarPathFinder::AstarGraphSearch(Vector3d start_pt, Vector3d end_pt)
                 please write your code below
                 *        
                 */
+                // shall update: gScore; fScore; cameFrom, mayby direction
+                if(neighborPtr -> gScore > (currentPtr -> gScore + edgeCostSets[i])){
+                    neighborPtr -> gScore = currentPtr -> gScore + edgeCostSets[i];
+                    neighborPtr -> fScore = neighborPtr -> gScore + getHeu(neighborPtr,endPtr);
+                    neighborPtr -> cameFrom = currentPtr;
+                }
+
                 continue;
             }
             else{//this node is in closed set
@@ -281,6 +392,7 @@ void AstarPathFinder::AstarGraphSearch(Vector3d start_pt, Vector3d end_pt)
                 please write your code below
                 *        
                 */
+                // todo nothing to do here?
                 continue;
             }
         }      
@@ -303,6 +415,11 @@ vector<Vector3d> AstarPathFinder::getPath()
     please write your code below
     *      
     */
+    auto ptr = terminatePtr;
+    while(ptr -> cameFrom != NULL){
+        gridPath.push_back(ptr);
+        ptr = ptr->cameFrom;
+    }
 
     for (auto ptr: gridPath)
         path.push_back(ptr->coord);
@@ -310,4 +427,29 @@ vector<Vector3d> AstarPathFinder::getPath()
     reverse(path.begin(),path.end());
 
     return path;
+}
+
+// if the difference of f is trivial, then choose then prefer the path along the straight line from start to goal
+// discared!!!
+GridNodePtr & TieBreaker(const std::multimap<double, GridNodePtr> &  openSet, const GridNodePtr & endPtr) {
+    // todo do I have to update the f in openSet??
+    std::multimap<double, GridNodePtr> local_set;
+
+    auto f_min = openSet.begin()->first;
+    auto f_max = f_min + 1e-2;
+    auto itlow = openSet.lower_bound (f_min);
+    auto itup = openSet.upper_bound(f_max);
+    double cross, f_new;
+
+    for (auto it=itlow; it!=itup; ++it){
+        std::cout << "f value is:" << (*it).first << " pointer is: " << (*it).second << '\n';
+        cross = std::abs(endPtr->coord(0) - (*it).second->coord(0)) +
+                std::abs(endPtr->coord(1) - (*it).second->coord(1)) +
+                std::abs(endPtr->coord(2) - (*it).second->coord(2));
+        f_new = (*it).second->fScore + 0.001 * cross;
+        local_set.insert( make_pair(f_new, (*it).second) ); // todo what is iterator, is this way correct?
+    }
+
+
+    return local_set.begin()->second;
 }

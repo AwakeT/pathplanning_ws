@@ -189,6 +189,9 @@ void JPSPathFinder::JPSGraphSearch(Eigen::Vector3d start_pt, Eigen::Vector3d end
     vector<GridNodePtr> neighborPtrSets;
     vector<double> edgeCostSets;
 
+    GridNodeMap[start_idx[0]][start_idx[1]][start_idx[2]] -> id = 1;
+    Eigen::Vector3i current_idx; // record the current index
+
     // this is the main loop
     while ( !openSet.empty() ){
         /*
@@ -202,6 +205,10 @@ void JPSPathFinder::JPSGraphSearch(Eigen::Vector3d start_pt, Eigen::Vector3d end
         *
         *
         */
+        currentPtr = openSet.begin() -> second; // first T1, second T2
+        openSet.erase(openSet.begin()); // remove the node with minimal f value
+        current_idx = currentPtr->index;
+        GridNodeMap[current_idx[0]][current_idx[1]][current_idx[2]] -> id = -1;// update the id in grid node map
 
         // if the current node is the goal 
         if( currentPtr->index == goalIdx ){
@@ -232,7 +239,9 @@ void JPSPathFinder::JPSGraphSearch(Eigen::Vector3d start_pt, Eigen::Vector3d end
             neighborPtrSets[i]->id = 1 : expanded, equal to this node is in close set
             *        
             */
-            if(neighborPtr -> id != 1){ //discover a new node
+            neighborPtr = neighborPtrSets[i];
+            tentative_gScore = currentPtr -> gScore + edgeCostSets[i];
+            if(neighborPtr -> id == 0){ //discover a new node // todo, modified to make it same as A* origianlly (id != 1)
                 /*
                 *
                 *
@@ -240,9 +249,24 @@ void JPSPathFinder::JPSGraphSearch(Eigen::Vector3d start_pt, Eigen::Vector3d end
                 please write your code below
                 *        
                 */
+                neighborPtr->gScore = tentative_gScore;
+                neighborPtr->fScore = neighborPtr->gScore + getHeu(neighborPtr,endPtr);
+                neighborPtr->cameFrom = currentPtr;
+
+                //update the expanding direction
+                for(int i = 0; i < 3; i++){
+                    neighborPtr->dir(i) = neighborPtr->index(i) - currentPtr->index(i);
+                    if( neighborPtr->dir(i) != 0)
+                        neighborPtr->dir(i) /= abs( neighborPtr->dir(i) );
+                }
+
+
+                // push node "m" into OPEN
+                openSet.insert(make_pair(neighborPtr -> fScore, neighborPtr));
+                neighborPtr -> id = 1;
                 continue;
             }
-            else if(tentative_gScore <= neighborPtr-> gScore){ //in open set and need update
+            else if(neighborPtr -> id == 1 && tentative_gScore <= neighborPtr-> gScore){ //in open set and need update
                 /*
                 *
                 *
@@ -250,9 +274,12 @@ void JPSPathFinder::JPSGraphSearch(Eigen::Vector3d start_pt, Eigen::Vector3d end
                 please write your code below
                 *        
                 */
+                neighborPtr -> gScore = currentPtr -> gScore + edgeCostSets[i];
+                neighborPtr -> fScore = neighborPtr -> gScore + getHeu(neighborPtr,endPtr);
+                neighborPtr -> cameFrom = currentPtr;
 
-
-                // if change its parents, update the expanding direction 
+                // todo: check the code below
+                // if change its parents, update the expanding direction
                 //THIS PART IS ABOUT JPS, you can ignore it when you do your Astar work
                 for(int i = 0; i < 3; i++){
                     neighborPtr->dir(i) = neighborPtr->index(i) - currentPtr->index(i);

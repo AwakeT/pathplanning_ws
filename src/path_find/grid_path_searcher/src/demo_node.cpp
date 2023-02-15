@@ -56,13 +56,11 @@ void rcvWaypointsCallback(const nav_msgs::Path & wp)
         return;
 
     Vector3d target_pt;
-    //获取交互界面的终点坐标
     target_pt << wp.poses[0].pose.position.x,
                  wp.poses[0].pose.position.y,
                  wp.poses[0].pose.position.z;
 
     ROS_INFO("[node] receive the planning target");
-    //输入起点终点，调用pathFind函数
     pathFinding(_start_pt, target_pt); 
 }
 
@@ -84,7 +82,6 @@ void rcvPointCloudCallBack(const sensor_msgs::PointCloud2 & pointcloud_map)
         pt = cloud.points[idx];        
 
         // set obstalces into grid map for path planning
-        //将障碍物信息设置进入栅格化地图，为后续路径规划做准备
         _astar_path_finder->setObs(pt.x, pt.y, pt.z);
         _jps_path_finder->setObs(pt.x, pt.y, pt.z);
 
@@ -100,7 +97,6 @@ void rcvPointCloudCallBack(const sensor_msgs::PointCloud2 & pointcloud_map)
     cloud_vis.height   = 1;
     cloud_vis.is_dense = true;
 
-    //可视化地图
     pcl::toROSMsg(cloud_vis, map_vis);
 
     map_vis.header.frame_id = "/world";
@@ -153,9 +149,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "demo_node");
     ros::NodeHandle nh("~");
 
-    //订阅地图回调信息
     _map_sub  = nh.subscribe( "map",       1, rcvPointCloudCallBack );
-    //订阅到达终点的回调信息
     _pts_sub  = nh.subscribe( "waypoints", 1, rcvWaypointsCallback );
 
     _grid_map_vis_pub             = nh.advertise<sensor_msgs::PointCloud2>("grid_map_vis", 1);
@@ -182,13 +176,11 @@ int main(int argc, char** argv)
     _max_y_id = (int)(_y_size * _inv_resolution);
     _max_z_id = (int)(_z_size * _inv_resolution);
 
-//定义了结构体AstarPathFinder 变量_astar_path_finder,该结构体存储、实现了 Astar 路径规划所需的所有信息和功能
     _astar_path_finder  = new AstarPathFinder();
     _astar_path_finder  -> initGridMap(_resolution, _map_lower, _map_upper, _max_x_id, _max_y_id, _max_z_id);
 
-//定义了结构体 JPSPathFinder 变量_jps_path_finder,该结构体存储、实现了 JPS 路径规划所需的所有信息和功能
-    _jps_path_finder    = new JPSPathFinder();
-    _jps_path_finder    -> initGridMap(_resolution, _map_lower, _map_upper, _max_x_id, _max_y_id, _max_z_id);
+//    _jps_path_finder    = new JPSPathFinder();
+//    _jps_path_finder    -> initGridMap(_resolution, _map_lower, _map_upper, _max_x_id, _max_y_id, _max_z_id);
     
     ros::Rate rate(100);
     bool status = ros::ok();
