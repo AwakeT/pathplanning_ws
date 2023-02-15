@@ -1,4 +1,4 @@
-prefix=/usr/local
+prefix=/home/ubuntu/pathplanning_ws/install
 
 Name: grid_path_searcher
 Description: Description of grid_path_searcher

@@ -268,7 +268,7 @@ if __name__ == '__main__':
 
         if not args.local:
             # environment at generation time
-            CMAKE_PREFIX_PATH = r'/home/ubuntu/mic_ws/devel;/home/ubuntu/loam_ws/devel;/home/ubuntu/gazebo_test_ws/devel;/home/ubuntu/ucarV2_ws/devel;/home/ubuntu/axg_ws/devel;/opt/ros/melodic'.split(';')
+            CMAKE_PREFIX_PATH = r'/home/ubuntu/pathplanning_ws/devel;/home/ubuntu/mic_ws/devel;/home/ubuntu/loam_ws/devel;/home/ubuntu/gazebo_test_ws/devel;/home/ubuntu/ucarV2_ws/devel;/home/ubuntu/axg_ws/devel;/opt/ros/melodic'.split(';')
         else:
             # don't consider any other prefix path than this one
             CMAKE_PREFIX_PATH = []

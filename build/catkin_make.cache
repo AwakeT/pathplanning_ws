@@ -1,2 +1,2 @@
-path_find/grid_path_searcher
+path_find/grid_path_searcher:path_find/rviz_plugins:path_find/waypoint_generator
 -DCATKIN_DEVEL_PREFIX=/home/ubuntu/pathplanning_ws/devel -DCMAKE_INSTALL_PREFIX=/home/ubuntu/pathplanning_ws/install -G Unix Makefiles

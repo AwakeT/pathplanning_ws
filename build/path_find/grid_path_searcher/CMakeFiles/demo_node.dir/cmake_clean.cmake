@@ -3,8 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/demo_node.dir/src/Astar_searcher.cpp.o"
   "CMakeFiles/demo_node.dir/src/read_only/JPS_utils.cpp.o"
   "CMakeFiles/demo_node.dir/src/read_only/JPS_searcher.cpp.o"
-  "../../devel/lib/grid_path_searcher/demo_node.pdb"
-  "../../devel/lib/grid_path_searcher/demo_node"
+  "/home/ubuntu/pathplanning_ws/devel/lib/grid_path_searcher/demo_node.pdb"
+  "/home/ubuntu/pathplanning_ws/devel/lib/grid_path_searcher/demo_node"
 )
 
 # Per-language clean rules from dependency scanning.

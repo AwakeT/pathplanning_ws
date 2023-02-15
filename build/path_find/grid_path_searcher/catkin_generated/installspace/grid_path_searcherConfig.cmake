@@ -68,13 +68,13 @@ set(grid_path_searcher_CONFIG_INCLUDED TRUE)
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
   set(grid_path_searcher_SOURCE_PREFIX /home/ubuntu/pathplanning_ws/src/path_find/grid_path_searcher)
-  set(grid_path_searcher_DEVEL_PREFIX /home/ubuntu/pathplanning_ws/build/devel)
+  set(grid_path_searcher_DEVEL_PREFIX /home/ubuntu/pathplanning_ws/devel)
   set(grid_path_searcher_INSTALL_PREFIX "")
   set(grid_path_searcher_PREFIX ${grid_path_searcher_DEVEL_PREFIX})
 else()
   set(grid_path_searcher_SOURCE_PREFIX "")
   set(grid_path_searcher_DEVEL_PREFIX "")
-  set(grid_path_searcher_INSTALL_PREFIX /usr/local)
+  set(grid_path_searcher_INSTALL_PREFIX /home/ubuntu/pathplanning_ws/install)
   set(grid_path_searcher_PREFIX ${grid_path_searcher_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /usr/local/lib;/home/ubuntu/r818_ws/devel/lib;/home/ubuntu/loam_ws/devel/lib;/home/ubuntu/gazebo_test_ws/devel/lib;/home/ubuntu/ucarV2_ws/devel/lib;/home/ubuntu/axg_ws/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/ubuntu/pathplanning_ws/install/lib;/home/ubuntu/pathplanning_ws/devel/lib;/home/ubuntu/mic_ws/devel/lib;/home/ubuntu/loam_ws/devel/lib;/home/ubuntu/gazebo_test_ws/devel/lib;/home/ubuntu/ucarV2_ws/devel/lib;/home/ubuntu/axg_ws/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
