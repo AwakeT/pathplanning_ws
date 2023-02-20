@@ -213,18 +213,7 @@ inline void AstarPathFinder::AstarGetSucc(GridNodePtr currentPtr, vector<GridNod
 
 double AstarPathFinder::getHeu(GridNodePtr node1, GridNodePtr node2)
 {
-    /* 
-    choose possible heuristic function you want
-    Manhattan, Euclidean, Diagonal, or 0 (Dijkstra)
-    Remember tie_breaker learned in lecture, add it here ?
-    *
-    *
-    *
-    STEP 1: finish the AstarPathFinder::getHeu , which is the heuristic function
-    please write your code below
-    *
-    *
-    */
+
     double h;
     auto node1_coord = node1->coord;
     auto node2_coord = node2->coord;
